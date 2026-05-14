@@ -1,10 +1,18 @@
-const botao = document.getElementById("btnResolver");
+let intervaloAnimacao = null;
+let ultimoResultado = null;
 
-botao.addEventListener("click", async function () {
+const botaoResolver = document.getElementById("btnResolver");
+const botaoSkip = document.getElementById("btnSkip");
+
+botaoResolver.addEventListener("click", async function () {
     const n = document.getElementById("valorN").value;
     const info = document.getElementById("info");
     const resultado = document.getElementById("resultado");
     const tabuleiro = document.getElementById("tabuleiro");
+
+    if (intervaloAnimacao) {
+        clearInterval(intervaloAnimacao);
+    }
 
     info.innerHTML = "";
     resultado.textContent = "Resolvendo...";
@@ -12,10 +20,33 @@ botao.addEventListener("click", async function () {
 
     const resposta = await fetch(`/resolver?n=${n}`);
     const data = await resposta.json();
-
+    
+    if (!resposta.ok) {
+        resultado.textContent = data.erro;
+        return;
+    }
+    
+    ultimoResultado = data;
+    
     resultado.textContent = JSON.stringify(data, null, 4);
-
+    
     animarHistorico(data);
+});
+
+botaoSkip.addEventListener("click", function () {
+    if (!ultimoResultado) {
+        return;
+    }
+
+    if (intervaloAnimacao) {
+        clearInterval(intervaloAnimacao);
+    }
+
+    mostrarInfoFinal(ultimoResultado);
+    montarTabuleiro(
+        ultimoResultado.n,
+        ultimoResultado.melhor_solucao
+    );
 });
 
 
@@ -30,7 +61,7 @@ function animarHistorico(data) {
 
     let indice = 0;
 
-    const intervalo = setInterval(function () {
+    intervaloAnimacao = setInterval(function () {
         const passo = historico[indice];
 
         mostrarInfoPasso(data.n, passo);
@@ -39,7 +70,7 @@ function animarHistorico(data) {
         indice++;
 
         if (indice >= historico.length) {
-            clearInterval(intervalo);
+            clearInterval(intervaloAnimacao);
             mostrarInfoFinal(data);
             montarTabuleiro(data.n, data.melhor_solucao);
         }
@@ -98,7 +129,7 @@ function montarTabuleiro(n, solucao) {
             if (solucao[coluna] === linha) {
                 casa.textContent = "♛";
                 casa.classList.add("rainha");
-            
+
                 if (conflitos.has(coluna)) {
                     casa.classList.add("conflito");
                 }
@@ -108,6 +139,7 @@ function montarTabuleiro(n, solucao) {
         }
     }
 }
+
 
 function obterColunasComConflito(solucao) {
     const conflitos = new Set();
