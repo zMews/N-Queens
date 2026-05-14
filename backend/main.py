@@ -7,7 +7,7 @@ from functions.nqueen import (
 
 
 def main():
-    n = 8
+    n = 128
 
     melhor_solucao, melhor_custo, iteracoes = simulated_annealing(
         n=n,

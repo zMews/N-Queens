@@ -19,7 +19,9 @@ def calcular_custo(estado):
         for outra_coluna in range(coluna_atual + 1, n):
             mesma_linha = estado[coluna_atual] == estado[outra_coluna]
 
-            mesma_diagonal = abs(estado[coluna_atual] - estado[outra_coluna]) == abs(coluna_atual - outra_coluna)
+            mesma_diagonal = abs(
+                estado[coluna_atual] - estado[outra_coluna]
+            ) == abs(coluna_atual - outra_coluna)
 
             if mesma_linha or mesma_diagonal:
                 conflitos += 1
