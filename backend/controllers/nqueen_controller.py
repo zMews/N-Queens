@@ -1,7 +1,5 @@
-import json
-import os
+from backend.algorithms.sa import simulated_annealing
 
-from backend.algorithms.simulated_annealing import simulated_annealing
 from backend.models.nqueen_model import (
     gerar_estado_inicial,
     gerar_vizinho,
@@ -9,7 +7,7 @@ from backend.models.nqueen_model import (
 )
 
 
-def executar_nqueen(n):
+def executar_nqueen(n=8):
     melhor_solucao, melhor_custo, iteracoes = simulated_annealing(
         n=n,
         gerar_estado_inicial=gerar_estado_inicial,
@@ -23,11 +21,5 @@ def executar_nqueen(n):
         "melhor_custo": melhor_custo,
         "iteracoes": iteracoes
     }
-
-    caminho_base = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    caminho_json = os.path.join(caminho_base, "frontend", "result.json")
-
-    with open(caminho_json, "w", encoding="utf-8") as arquivo:
-        json.dump(resultado, arquivo, indent=4, ensure_ascii=False)
 
     return resultado

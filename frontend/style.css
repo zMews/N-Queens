@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f4f4f4;
+}
+
+.controle {
+    margin: 20px;
+}
+
+.controle input {
+    padding: 8px;
+    width: 80px;
+}
+
+.controle button {
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+#resultado {
+    width: fit-content;
+    max-width: 90%;
+    margin: 20px auto;
+    padding: 16px;
+    text-align: left;
+    background: #ffffff;
+    border: 1px solid #ccc;
+}

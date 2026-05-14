@@ -1,0 +1,15 @@
+{
+    "n": 8,
+    "melhor_solucao": [
+        2,
+        5,
+        7,
+        0,
+        3,
+        6,
+        4,
+        1
+    ],
+    "melhor_custo": 0,
+    "iteracoes": 78600
+}
