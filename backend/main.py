@@ -1,24 +1,16 @@
-from algorithms.sa import simulated_annealing
-from functions.nqueen import (
-    gerar_estado_inicial,
-    gerar_vizinho,
-    calcular_custo
-)
+from backend.controllers.nqueen_controller import executar_nqueen
 
 
 def main():
-    n = 128
+    n = int(input("Digite o valor de N: "))
 
-    melhor_solucao, melhor_custo, iteracoes = simulated_annealing(
-        n=n,
-        gerar_estado_inicial=gerar_estado_inicial,
-        gerar_vizinho=gerar_vizinho,
-        calcular_custo=calcular_custo
-    )
+    resultado = executar_nqueen(n=n)
 
-    print("Melhor solução:", melhor_solucao)
-    print("Melhor custo:", melhor_custo)
-    print("Iterações:", iteracoes)
+    print("Resultado gerado com sucesso!")
+    print("N:", resultado["n"])
+    print("Melhor solução:", resultado["melhor_solucao"])
+    print("Melhor custo:", resultado["melhor_custo"])
+    print("Iterações:", resultado["iteracoes"])
 
 
 if __name__ == "__main__":
