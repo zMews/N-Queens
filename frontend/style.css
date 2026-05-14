@@ -18,6 +18,35 @@ body {
     cursor: pointer;
 }
 
+#info {
+    margin: 20px auto;
+}
+
+#tabuleiro {
+    display: grid;
+    justify-content: center;
+    margin: 20px auto;
+}
+
+.casa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clara {
+    background: #f0d9b5;
+}
+
+.escura {
+    background: #b58863;
+}
+
+.rainha {
+    color: #111;
+    font-weight: bold;
+}
+
 #resultado {
     width: fit-content;
     max-width: 90%;
@@ -26,4 +55,10 @@ body {
     text-align: left;
     background: #ffffff;
     border: 1px solid #ccc;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.conflito {
+    background: #ff4d4d !important;
 }
