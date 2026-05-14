@@ -97,6 +97,7 @@ function mostrarInfoFinal(data) {
         <p><strong>N:</strong> ${data.n}</p>
         <p><strong>Melhor custo:</strong> ${data.melhor_custo}</p>
         <p><strong>Total de iterações:</strong> ${data.iteracoes}</p>
+        <p><strong>Tempo de execução:</strong> ${data.tempo_execucao}s</p>
         <p><strong>Melhor solução:</strong> [${data.melhor_solucao.join(", ")}]</p>
     `;
 }
