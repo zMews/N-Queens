@@ -1,23 +1,75 @@
-const botao = document.getElementById("btnResolver");
+let intervaloAnimacao = null;
+let ultimoResultado = null;
 
-botao.addEventListener("click", async function () {
+const botaoResolver = document.getElementById("btnResolver");
+const botaoSkip = document.getElementById("btnSkip");
+const botaoReset = document.getElementById("btnReset");
+
+botaoResolver.addEventListener("click", async function () {
     const n = document.getElementById("valorN").value;
     const info = document.getElementById("info");
     const resultado = document.getElementById("resultado");
     const tabuleiro = document.getElementById("tabuleiro");
 
+    if (intervaloAnimacao) {
+        clearInterval(intervaloAnimacao);
+    }
+
+    botaoResolver.disabled = true;
+    botaoResolver.textContent = "Resolvendo...";
+
     info.innerHTML = "";
     resultado.textContent = "Resolvendo...";
     tabuleiro.innerHTML = "";
 
-    const resposta = await fetch(`/resolver?n=${n}`);
-    const data = await resposta.json();
+    try {
+        const resposta = await fetch(`/resolver?n=${n}`);
+        const data = await resposta.json();
 
-    resultado.textContent = JSON.stringify(data, null, 4);
+        if (!resposta.ok) {
+            resultado.textContent = data.erro;
+            return;
+        }
 
-    animarHistorico(data);
+        ultimoResultado = data;
+
+        resultado.textContent = formatarResultado(data);
+
+        animarHistorico(data);
+    } finally {
+        botaoResolver.disabled = false;
+        botaoResolver.textContent = "Resolver";
+    }
 });
 
+botaoSkip.addEventListener("click", function () {
+    if (!ultimoResultado) {
+        return;
+    }
+
+    if (intervaloAnimacao) {
+        clearInterval(intervaloAnimacao);
+    }
+
+    mostrarInfoFinal(ultimoResultado);
+    montarTabuleiro(
+        ultimoResultado.n,
+        ultimoResultado.melhor_solucao
+    );
+});
+
+botaoReset.addEventListener("click", function () {
+    if (intervaloAnimacao) {
+        clearInterval(intervaloAnimacao);
+    }
+
+    ultimoResultado = null;
+
+    document.getElementById("valorN").value = 8;
+    document.getElementById("info").innerHTML = "";
+    document.getElementById("tabuleiro").innerHTML = "";
+    document.getElementById("resultado").textContent = "";
+});
 
 function animarHistorico(data) {
     const historico = data.historico;
@@ -30,7 +82,7 @@ function animarHistorico(data) {
 
     let indice = 0;
 
-    const intervalo = setInterval(function () {
+    intervaloAnimacao = setInterval(function () {
         const passo = historico[indice];
 
         mostrarInfoPasso(data.n, passo);
@@ -39,7 +91,7 @@ function animarHistorico(data) {
         indice++;
 
         if (indice >= historico.length) {
-            clearInterval(intervalo);
+            clearInterval(intervaloAnimacao);
             mostrarInfoFinal(data);
             montarTabuleiro(data.n, data.melhor_solucao);
         }
@@ -66,6 +118,7 @@ function mostrarInfoFinal(data) {
         <p><strong>N:</strong> ${data.n}</p>
         <p><strong>Melhor custo:</strong> ${data.melhor_custo}</p>
         <p><strong>Total de iterações:</strong> ${data.iteracoes}</p>
+        <p><strong>Tempo de execução:</strong> ${data.tempo_execucao}s</p>
         <p><strong>Melhor solução:</strong> [${data.melhor_solucao.join(", ")}]</p>
     `;
 }
@@ -75,7 +128,7 @@ function montarTabuleiro(n, solucao) {
     const tabuleiro = document.getElementById("tabuleiro");
     tabuleiro.innerHTML = "";
 
-    const tamanhoCasa = n <= 16 ? 45 : 25;
+    const tamanhoCasa = n <= 16 ? 70 : 40;
     const conflitos = obterColunasComConflito(solucao);
 
     tabuleiro.style.gridTemplateColumns = `repeat(${n}, ${tamanhoCasa}px)`;
@@ -98,7 +151,7 @@ function montarTabuleiro(n, solucao) {
             if (solucao[coluna] === linha) {
                 casa.textContent = "♛";
                 casa.classList.add("rainha");
-            
+
                 if (conflitos.has(coluna)) {
                     casa.classList.add("conflito");
                 }
@@ -108,6 +161,7 @@ function montarTabuleiro(n, solucao) {
         }
     }
 }
+
 
 function obterColunasComConflito(solucao) {
     const conflitos = new Set();
@@ -129,4 +183,29 @@ function obterColunasComConflito(solucao) {
     }
 
     return conflitos;
+}
+
+function formatarResultado(data) {
+    let texto = "";
+
+    texto += `N: ${data.n}\n`;
+    texto += `Melhor custo: ${data.melhor_custo}\n`;
+    texto += `Iterações: ${data.iteracoes}\n`;
+    texto += `Tempo de execução: ${data.tempo_execucao}s\n`;
+    texto += `Melhor solução: [${data.melhor_solucao.join(", ")}]\n\n`;
+
+    texto += "<------------------------------------------->\n";
+    texto += "Histórico:\n";
+    texto += "<------------------------------------------->\n\n";
+
+    data.historico.forEach(function (passo) {
+        texto += `Estado: [${passo.estado.join(", ")}]\n`;
+        texto += `Iteração: ${passo.iteracao}\n`;
+        texto += `Custo: ${passo.custo}\n`;
+        texto += `Temp: ${passo.temperatura}\n`;
+        texto += "<------------------------------------------->\n";
+        texto += "<------------------------------------------->\n";
+    });
+
+    return texto;
 }

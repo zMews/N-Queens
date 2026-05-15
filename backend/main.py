@@ -19,7 +19,17 @@ def home():
 
 @app.route("/resolver", methods=["GET"])
 def resolver():
-    n = int(request.args.get("n", 8))
+    try:
+        n = int(request.args.get("n", 8))
+    except ValueError:
+        return jsonify({"erro": "N deve ser um número inteiro."}), 400
+
+    if n < 4:
+        return jsonify({"erro": "N deve ser maior ou igual a 4."}), 400
+
+    if n > 128:
+        return jsonify({"erro": "N máximo permitido é 128."}), 400
+
     resultado = executar_nqueen(n=n)
     return jsonify(resultado)
 
