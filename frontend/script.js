@@ -128,7 +128,7 @@ function montarTabuleiro(n, solucao) {
     const tabuleiro = document.getElementById("tabuleiro");
     tabuleiro.innerHTML = "";
 
-    const tamanhoCasa = n <= 16 ? 45 : 25;
+    const tamanhoCasa = n <= 16 ? 70 : 40;
     const conflitos = obterColunasComConflito(solucao);
 
     tabuleiro.style.gridTemplateColumns = `repeat(${n}, ${tamanhoCasa}px)`;
