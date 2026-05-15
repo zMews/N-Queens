@@ -7,9 +7,10 @@ const botaoReset = document.getElementById("btnReset");
 
 botaoResolver.addEventListener("click", async function () {
     const n = document.getElementById("valorN").value;
-    const info = document.getElementById("info");
-    const resultado = document.getElementById("resultado");
-    const tabuleiro = document.getElementById("tabuleiro");
+    const temperaturaInicial = document.getElementById("temperaturaInicial").value;
+    const alpha = document.getElementById("alpha").value;
+    const temperaturaMin = document.getElementById("temperaturaMin").value;
+    const iteracaoMax = document.getElementById("iteracaoMax").value;
 
     if (intervaloAnimacao) {
         clearInterval(intervaloAnimacao);
@@ -23,8 +24,9 @@ botaoResolver.addEventListener("click", async function () {
     tabuleiro.innerHTML = "";
 
     try {
-        const resposta = await fetch(`/resolver?n=${n}`);
-        const data = await resposta.json();
+        const url = `/resolver?n=${n}&temperatura_inicial=${temperaturaInicial}&alpha=${alpha}&temperatura_min=${temperaturaMin}&iteracao_max=${iteracaoMax}`;
+
+        const resposta = await fetch(url);
 
         if (!resposta.ok) {
             resultado.textContent = data.erro;
@@ -69,6 +71,10 @@ botaoReset.addEventListener("click", function () {
     document.getElementById("info").innerHTML = "";
     document.getElementById("tabuleiro").innerHTML = "";
     document.getElementById("resultado").textContent = "";
+    document.getElementById("temperaturaInicial").value = 1000;
+    document.getElementById("alpha").value = 0.99;
+    document.getElementById("temperaturaMin").value = 0.01;
+    document.getElementById("iteracaoMax").value = 100;
 });
 
 function animarHistorico(data) {
@@ -120,6 +126,8 @@ function mostrarInfoFinal(data) {
         <p><strong>Total de iterações:</strong> ${data.iteracoes}</p>
         <p><strong>Tempo de execução:</strong> ${data.tempo_execucao}s</p>
         <p><strong>Melhor solução:</strong> [${data.melhor_solucao.join(", ")}]</p>
+        <p><strong>Alpha:</strong> ${data.alpha}</p>
+        <p><strong>Temperatura final:</strong> ${data.temperatura_final}</p>
     `;
 }
 
@@ -192,7 +200,9 @@ function formatarResultado(data) {
     texto += `Melhor custo: ${data.melhor_custo}\n`;
     texto += `Iterações: ${data.iteracoes}\n`;
     texto += `Tempo de execução: ${data.tempo_execucao}s\n`;
-    texto += `Melhor solução: [${data.melhor_solucao.join(", ")}]\n\n`;
+    texto += `Melhor solução: [${data.melhor_solucao.join(", ")}]\n`;
+    texto += `Alpha: ${data.alpha}\n`;
+    texto += `Temperatura final: ${data.temperatura_final}\n\n`;
 
     texto += "<------------------------------------------->\n";
     texto += "Histórico:\n";
