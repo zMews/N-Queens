@@ -12,6 +12,10 @@ botaoResolver.addEventListener("click", async function () {
     const temperaturaMin = document.getElementById("temperaturaMin").value;
     const iteracaoMax = document.getElementById("iteracaoMax").value;
 
+    const info = document.getElementById("info");
+    const resultado = document.getElementById("resultado");
+    const tabuleiro = document.getElementById("tabuleiro");
+
     if (intervaloAnimacao) {
         clearInterval(intervaloAnimacao);
     }
@@ -27,6 +31,7 @@ botaoResolver.addEventListener("click", async function () {
         const url = `/resolver?n=${n}&temperatura_inicial=${temperaturaInicial}&alpha=${alpha}&temperatura_min=${temperaturaMin}&iteracao_max=${iteracaoMax}`;
 
         const resposta = await fetch(url);
+        const data = await resposta.json();
 
         if (!resposta.ok) {
             resultado.textContent = data.erro;
