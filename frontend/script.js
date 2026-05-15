@@ -3,6 +3,7 @@ let ultimoResultado = null;
 
 const botaoResolver = document.getElementById("btnResolver");
 const botaoSkip = document.getElementById("btnSkip");
+const botaoReset = document.getElementById("btnReset");
 
 botaoResolver.addEventListener("click", async function () {
     const n = document.getElementById("valorN").value;
@@ -14,23 +15,31 @@ botaoResolver.addEventListener("click", async function () {
         clearInterval(intervaloAnimacao);
     }
 
+    botaoResolver.disabled = true;
+    botaoResolver.textContent = "Resolvendo...";
+
     info.innerHTML = "";
     resultado.textContent = "Resolvendo...";
     tabuleiro.innerHTML = "";
 
-    const resposta = await fetch(`/resolver?n=${n}`);
-    const data = await resposta.json();
-    
-    if (!resposta.ok) {
-        resultado.textContent = data.erro;
-        return;
+    try {
+        const resposta = await fetch(`/resolver?n=${n}`);
+        const data = await resposta.json();
+
+        if (!resposta.ok) {
+            resultado.textContent = data.erro;
+            return;
+        }
+
+        ultimoResultado = data;
+
+        resultado.textContent = formatarResultado(data);
+
+        animarHistorico(data);
+    } finally {
+        botaoResolver.disabled = false;
+        botaoResolver.textContent = "Resolver";
     }
-    
-    ultimoResultado = data;
-    
-    resultado.textContent = JSON.stringify(data, null, 4);
-    
-    animarHistorico(data);
 });
 
 botaoSkip.addEventListener("click", function () {
@@ -49,6 +58,18 @@ botaoSkip.addEventListener("click", function () {
     );
 });
 
+botaoReset.addEventListener("click", function () {
+    if (intervaloAnimacao) {
+        clearInterval(intervaloAnimacao);
+    }
+
+    ultimoResultado = null;
+
+    document.getElementById("valorN").value = 8;
+    document.getElementById("info").innerHTML = "";
+    document.getElementById("tabuleiro").innerHTML = "";
+    document.getElementById("resultado").textContent = "";
+});
 
 function animarHistorico(data) {
     const historico = data.historico;
@@ -162,4 +183,29 @@ function obterColunasComConflito(solucao) {
     }
 
     return conflitos;
+}
+
+function formatarResultado(data) {
+    let texto = "";
+
+    texto += `N: ${data.n}\n`;
+    texto += `Melhor custo: ${data.melhor_custo}\n`;
+    texto += `Iterações: ${data.iteracoes}\n`;
+    texto += `Tempo de execução: ${data.tempo_execucao}s\n`;
+    texto += `Melhor solução: [${data.melhor_solucao.join(", ")}]\n\n`;
+
+    texto += "<------------------------------------------->\n";
+    texto += "Histórico:\n";
+    texto += "<------------------------------------------->\n\n";
+
+    data.historico.forEach(function (passo) {
+        texto += `Estado: [${passo.estado.join(", ")}]\n`;
+        texto += `Iteração: ${passo.iteracao}\n`;
+        texto += `Custo: ${passo.custo}\n`;
+        texto += `Temp: ${passo.temperatura}\n`;
+        texto += "<------------------------------------------->\n";
+        texto += "<------------------------------------------->\n";
+    });
+
+    return texto;
 }
