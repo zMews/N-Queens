@@ -19,7 +19,7 @@ O objetivo do problema é posicionar N rainhas em um tabuleiro NxN sem que nenhu
 ```text
 backend/
   algorithms/
-    simulated_annealing.py
+    sa.py
   controllers/
     nqueen_controller.py
   models/
