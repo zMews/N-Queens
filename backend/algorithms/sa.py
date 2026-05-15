@@ -62,4 +62,4 @@ def simulated_annealing(
 
         temperatura *= alpha
 
-    return melhor_solucao, melhor_custo, iteracoes, historico
+    return melhor_solucao, melhor_custo, iteracoes, historico, alpha, temperatura

@@ -9,8 +9,21 @@
     <h1>N-Rainhas com Simulated Annealing</h1>
 
     <div class="controle">
-        <label for="valorN">Escolha o N:</label>
+        <label for="valorN">N:</label>
         <input type="number" id="valorN" min="4" value="8">
+    
+        <label for="temperaturaInicial">Temp. inicial:</label>
+        <input type="number" id="temperaturaInicial" value="1000">
+    
+        <label for="alpha">Alpha:</label>
+        <input type="number" id="alpha" step="0.001" value="0.99">
+    
+        <label for="temperaturaMin">Temp. mínima:</label>
+        <input type="number" id="temperaturaMin" step="0.001" value="0.01">
+    
+        <label for="iteracaoMax">Iter. máx:</label>
+        <input type="number" id="iteracaoMax" value="100">
+    
         <button id="btnResolver">Resolver</button>
         <button id="btnSkip">Skip</button>
         <button id="btnReset">Reset</button>
